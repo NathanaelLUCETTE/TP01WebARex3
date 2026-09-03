@@ -1,79 +1,77 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>AR.js + A-Frame – Interaction</title>
+  <head>
+    <meta charset="utf-8">
+    <title>AR.js + A-Frame – Interaction</title>
 
-  <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 
-  <script>
-    AFRAME.registerComponent('box-interactions', {
-      init: function () {
+    <script>
+      AFRAME.registerComponent('box-interactions', {
+        init: function () {
+          const box = this.el;
 
-        const box = this.el;
+          box.addEventListener('click', () => {
+            // changer couleur
+            const currentColor = box.getAttribute('material').color;
+            const newColor = currentColor === '#4CC3D9'
+              ? '#EF2D5E'
+              : '#4CC3D9';
 
-        box.addEventListener('click', function () {
+            box.setAttribute('material', 'color', newColor);
 
-          console.log("BOÎTE CLIQUÉE !");
+            // changer vitesse de rotation (dur plus petit)
+            const currentDur = box.getAttribute('animation').dur || 3000;
+            const newDur = currentDur === 3000 ? 800 : 3000;
 
-          // Récupérer la couleur actuelle
-          const currentColor = box.getAttribute('material').color;
+            box.setAttribute('animation', 'dur', newDur);
+          });
+        }
+      });
+    </script>
+  </head>
 
-          // Changer la couleur
-          if (currentColor === '#4CC3D9') {
-            box.setAttribute('material', 'color', '#EF2D5E');
-          } else {
-            box.setAttribute('material', 'color', '#4CC3D9');
-          }
+  <body style="margin:0; overflow:hidden;">
 
-          // Changer la vitesse de rotation
-          const currentAnimation = box.getAttribute('animation__rotation');
+    <a-scene embedded arjs="sourceType: webcam;">
 
-          if (currentAnimation.dur === 3000) {
-            box.setAttribute('animation__rotation', {
-              property: 'rotation',
-              to: '0 360 0',
-              loop: true,
-              dur: 800
-            });
-          } else {
-            box.setAttribute('animation__rotation', {
-              property: 'rotation',
-              to: '0 360 0',
-              loop: true,
-              dur: 3000
-            });
-          }
+      <a-marker preset="hiro">
 
-        });
-      }
-    });
-  </script>
-</head>
+        <a-box
+          class="clickable"
+          position="0 0.5 0"
+          material="color: #4CC3D9; opacity: 0.5;"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 3000"
+          box-interactions>
+        </a-box>
 
-<body style="margin:0; overflow:hidden;">
+      </a-marker>
 
-  <a-scene embedded
-           arjs="sourceType: webcam;">
+      <a-marker
+        type="pattern"
+        url="pattern-maker.patt">
 
-    <a-marker preset="hiro">
-            <!-- Objet 3D -->
-            <a-sphere
-                position="0 0.5 0"
-                radius="0.5"
-                color="#EF2D5E">
+        <a-sphere
+          position="0 0.5 0"
+          radius="0.5"
+          color="#EF2D5E"
+          animation="
+            property: rotation;
+            to: 0 360 0;
+            loop: true;
+            dur: 3000">
+        </a-sphere>
 
-            </a-sphere>
+      </a-marker>
 
-        </a-marker>
-    <a-entity
-      camera
-      cursor="rayOrigin: mouse"
-      raycaster="objects: .clickable">
-    </a-entity>
+      <a-entity
+        camera
+        cursor="fuse: false; rayOrigin: mouse"
+        raycaster="objects: .clickable">
+      </a-entity>
 
-  </a-scene>
+    </a-scene>
 
-</body>
+  </body>
 </html>
